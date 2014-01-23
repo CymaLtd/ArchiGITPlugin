@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="uk.ac.bolton.archimate.editor.exportHandler">
+      <exportHandler
+            class="nz.co.cyma.integrations.archigitsync.plugin.modelexport.ModelVersioner"
+            id="uk.ac.bolton.archimate.import_export_example.exportHandler"
+            label="Version model...">
+      </exportHandler>
+   </extension>
+   <extension
+         point="uk.ac.bolton.archimate.editor.importHandler">
+      <importHandler
+            class="nz.co.cyma.integrations.archigitsync.plugin.modelimport.LocalRepositoryImport"
+            id="nz.co.cyma.integrations.archigitsync.plugin.modelimport.LocalRepositoryImport"
+            label="Import Versioned Model...">
+      </importHandler>
+   </extension>
+
+</plugin>
