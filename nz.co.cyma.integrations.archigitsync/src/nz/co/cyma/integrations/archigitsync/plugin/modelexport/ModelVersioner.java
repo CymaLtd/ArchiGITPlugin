@@ -90,7 +90,7 @@ public class ModelVersioner implements IModelExporter {
 			
 			//make sure we save the model after all this so that the properties are kept
 			//TODO doesn't work because the model doesn't think it is dirty, need to fix...
-			IEditorModelManager.INSTANCE.saveModelAs(model);
+			//IEditorModelManager.INSTANCE.saveModelAs(model);
 
 		} catch (VersioningException e) {
 			MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR | SWT.OK);
