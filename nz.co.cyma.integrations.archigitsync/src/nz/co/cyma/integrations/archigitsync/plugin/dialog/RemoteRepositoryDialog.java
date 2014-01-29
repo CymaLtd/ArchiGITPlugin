@@ -20,19 +20,19 @@ import org.eclipse.swt.widgets.Text;
 	 * existing repository and by the import.
 	 *
 	 */
-	public class CloneRepositoryDialog extends TitleAreaDialog {
+	public class RemoteRepositoryDialog extends TitleAreaDialog {
 
 	  private Text txtRepositoryToClone;
 	  private Text txtWorkingDirectory;
 	  private Text txtRepoUser;
 	  private Text txtRepoPassword;
 
-	  private String repositoryToClone;
+	  private String repositoryToClone = null;
 	  private String workingDirectory;
-	  private String repoUser;
+	  private String repoUser = null;
 	  private String repoPassword;
 
-	  public CloneRepositoryDialog(Shell parentShell) {
+	  public RemoteRepositoryDialog(Shell parentShell) {
 	    super(parentShell);
 	  }
 
@@ -62,7 +62,7 @@ import org.eclipse.swt.widgets.Text;
 
 	  private void createRepositoryToClone(Composite container) {
 	    Label lbtRepoToClone = new Label(container, SWT.NONE);
-	    lbtRepoToClone.setText("Repository To Clone Location");
+	    lbtRepoToClone.setText("Remote Repository Location");
 
 	    GridData dataRepoToClone = new GridData();
 	    dataRepoToClone.grabExcessHorizontalSpace = true;
@@ -70,6 +70,8 @@ import org.eclipse.swt.widgets.Text;
 
 	    txtRepositoryToClone = new Text(container, SWT.BORDER);
 	    txtRepositoryToClone.setLayoutData(dataRepoToClone);
+	    if(this.repositoryToClone!=null)
+	    	txtRepositoryToClone.setText(repositoryToClone);
 	    
 	    txtRepositoryToClone.addFocusListener(new FocusAdapter() {
 
@@ -112,6 +114,8 @@ import org.eclipse.swt.widgets.Text;
 
 	    txtRepoUser = new Text(container, SWT.BORDER);
 	    txtRepoUser.setLayoutData(dataRepoUser);
+	    if(this.repoUser!=null)
+	    	txtRepoUser.setText(repoUser);
 	    
 	  }
 	  
@@ -163,5 +167,13 @@ import org.eclipse.swt.widgets.Text;
 	  
 	  public String getRepoPassword() {
 		  return repoPassword;
+	  }
+	  
+	  public void setRemoteRepository(String remoteRepository) {
+		  this.repositoryToClone = remoteRepository;
+	  }
+	  
+	  public void setRemoteUser(String remoteUser) {
+		  this.repoUser = remoteUser;
 	  }
 }

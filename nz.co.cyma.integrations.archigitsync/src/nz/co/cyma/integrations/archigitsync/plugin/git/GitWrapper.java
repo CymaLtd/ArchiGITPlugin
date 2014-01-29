@@ -18,6 +18,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
 import org.eclipse.jgit.api.errors.ConcurrentRefUpdateException;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -313,5 +314,28 @@ public class GitWrapper {
 		} catch (GitAPIException e) {
 			throw new VersioningException(e.getMessage(), e);
 		}
+	}
+	
+	public void pushModelToRemoteRepo(URI remoteRepo, String repoUser, String repoPassword, String branchToPush) throws VersioningException {
+		PushCommand push = archiRepo.push();
+		push.add(this.DEFAULT_GIT_BRANCH_NAME);
+		push.add(branchToPush);
+		push.setRemote(remoteRepo.toString());
+		
+		if(repoUser != null && repoPassword != null) {
+			UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(repoUser, repoPassword);
+			push.setCredentialsProvider(credentialsProvider);
+		}
+		
+		try {
+			push.call();
+		} catch (InvalidRemoteException e) {
+			throw new VersioningException(e.getMessage(), e);
+		} catch (TransportException e) {
+			throw new VersioningException(e.getMessage(), e);
+		} catch (GitAPIException e) {
+			throw new VersioningException(e.getMessage(), e);
+		}
+
 	}
 }

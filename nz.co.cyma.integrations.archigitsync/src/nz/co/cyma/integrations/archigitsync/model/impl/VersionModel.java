@@ -59,6 +59,8 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 	private String modelUser = null;
 	private String modelUserEmail = null;
 	private String repoBranch = null;
+	private String remoteRepoLocation = null;
+	private String remoteUser = null;
 	
 	protected VersionModel(IArchimateModel archiModel) {
 		this.archiModel = archiModel;
@@ -101,6 +103,12 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 			}
 			else if (modelProperty.getKey().equals(this.MODEL_REPO_DESCRIPTION_PROPERTY_NAME)) {
 				this.repositoryDescription = (String) modelProperty.getValue();
+			}
+			else if (modelProperty.getKey().equals(this.REMOTE_REPO_LOCATION_PROPERTY_NAME)) {
+				this.remoteRepoLocation = (String) modelProperty.getValue();
+			}
+			else if (modelProperty.getKey().equals(this.REMOTE_REPO_USER_PROPERTY_NAME)) {
+				this.remoteUser = (String) modelProperty.getValue();
 			}
 		}
 	}
@@ -474,6 +482,23 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 				
 	}
 	
+	public String getRemoteRepoLocation() {
+		return this.remoteRepoLocation;
+	}
+	
+	public void setRemoteRepoLocation(String remoteRepoLocation) {
+		this.remoteRepoLocation = remoteRepoLocation;
+		this.setArchiModelProperty(REMOTE_REPO_LOCATION_PROPERTY_NAME, remoteRepoLocation);
+	}
+	
+	public String getRemoteUser() {
+		return this.remoteUser;
+	}
+	
+	public void setRemoteUser(String remoteUser) {
+		this.remoteUser = remoteUser;
+		this.setArchiModelProperty(REMOTE_REPO_USER_PROPERTY_NAME, remoteUser);
+	}
 
 	private void setArchiModelProperty(String propertyName, String propertyValue) {
 		Map<String, IProperty> existingProps = ArchiUtils.getPropertiesMap(archiModel.getProperties());

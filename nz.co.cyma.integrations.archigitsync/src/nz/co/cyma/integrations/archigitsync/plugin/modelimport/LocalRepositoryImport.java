@@ -16,7 +16,7 @@ import nz.co.cyma.integrations.archigitsync.model.VersionElementAttribute;
 import nz.co.cyma.integrations.archigitsync.model.VersionRelationshipAttribute;
 import nz.co.cyma.integrations.archigitsync.model.impl.FolderPath;
 import nz.co.cyma.integrations.archigitsync.plugin.ArchiUtils;
-import nz.co.cyma.integrations.archigitsync.plugin.dialog.CloneRepositoryDialog;
+import nz.co.cyma.integrations.archigitsync.plugin.dialog.RemoteRepositoryDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewModelDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewRepositoryDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.git.GitWrapper;
@@ -140,7 +140,7 @@ public class LocalRepositoryImport implements IModelImporter {
     	workingDir = this.askSaveDirectory();
     	
     	//then the clone info
-    	CloneRepositoryDialog dialog = new CloneRepositoryDialog(Display.getCurrent().getActiveShell());
+    	RemoteRepositoryDialog dialog = new RemoteRepositoryDialog(Display.getCurrent().getActiveShell());
     	dialog.create();
     	dialog.open();
     	
@@ -160,6 +160,8 @@ public class LocalRepositoryImport implements IModelImporter {
     	repoPassword = dialog.getRepoPassword();
     	
     	this.createModelProperty(model, IVersionModelPropertyConstants.WORKING_DIR_PROPERTY_NAME, workingDir.toString());
+    	this.createModelProperty(model, IVersionModelPropertyConstants.REMOTE_REPO_LOCATION_PROPERTY_NAME, repoToClone.toString());
+    	this.createModelProperty(model, IVersionModelPropertyConstants.REMOTE_REPO_USER_PROPERTY_NAME, repoUser);
     }
     
     private File askSaveDirectory() {

@@ -9,5 +9,7 @@ public interface IVersionModelPropertyConstants {
 	public static String MODEL_USER_EMAIL_NAME = "model_user_email";
 	public static String MODEL_FILE_NAME = "archi_model";
 	public static String MODEL_REPO_BRANCH_PROPERTY_NAME = "repository_branch";
+	public static String REMOTE_REPO_LOCATION_PROPERTY_NAME = "remote_repository_location";
+	public static String REMOTE_REPO_USER_PROPERTY_NAME = "remote_repository_user";
 	
 }

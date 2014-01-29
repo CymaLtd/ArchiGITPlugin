@@ -44,4 +44,8 @@ public interface IVersionModel {
 	public void addVersionElementToModel(IVersionElement element, FolderType elementType);
 	public void setRepoBranch(String repoBranch);
 	public String getRepoBranch();
+	public String getRemoteRepoLocation();
+	public void setRemoteRepoLocation(String remoteRepoLocation);
+	public String getRemoteUser();
+	public void setRemoteUser(String remoteUser);
 }

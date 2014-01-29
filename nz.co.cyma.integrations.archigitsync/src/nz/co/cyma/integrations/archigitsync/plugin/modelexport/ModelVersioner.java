@@ -14,7 +14,7 @@ import java.util.Map;
 import nz.co.cyma.integrations.archigitsync.model.IVersionModel;
 import nz.co.cyma.integrations.archigitsync.model.IVersionModelPropertyConstants;
 import nz.co.cyma.integrations.archigitsync.plugin.VersioningException;
-import nz.co.cyma.integrations.archigitsync.plugin.dialog.CloneRepositoryDialog;
+import nz.co.cyma.integrations.archigitsync.plugin.dialog.RemoteRepositoryDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewModelDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewRepositoryDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.VersionModelDialog;
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
+import uk.ac.bolton.archimate.editor.model.IEditorModelManager;
 import uk.ac.bolton.archimate.editor.model.IModelExporter;
 import uk.ac.bolton.archimate.model.FolderType;
 import uk.ac.bolton.archimate.model.IArchimateElement;
@@ -51,37 +52,88 @@ public class ModelVersioner implements IModelExporter {
 	private String repoUser = null;
 	private String repoPassword = null;
 	private String versionComment = "";
+	private boolean pushToRemoteOnVersion = false;
 	
 	@Override
     public void export(IArchimateModel model) throws IOException {
 
 		
-		//first prepare the model to be versioned
-		ModelPreparer modelPreparer = new ModelPreparer();
-		versionModel = modelPreparer.generateVersionModel(model);
-		
-		//next get any comment on the versioning, and if the model is new ask how the user wants to handle it
-		this.askBasicVersionInfo();
-		
-		//next we need to set things up if the model hasn't been versioned before, if it hasn't then we should just be able to go
-		//straight to versioning it in the chosen working directory
-		if(versionModel.getRepositoryId()==null) {
-			//always start with where the working directory will be
-			File workingDir = setupWorkingDirectory();
+		try {
+			//first prepare the model to be versioned
+			ModelPreparer modelPreparer = new ModelPreparer();
+			versionModel = modelPreparer.generateVersionModel(model);
 			
-			//if it's the first time versioning, need to know if we are creating a brand new repository or adding to an existing one
-			if(createNewRepository)
-				versionToNewRepository(workingDir);
-			else
-				versionToExistingRepository(workingDir);
+			//next get any comment on the versioning, and if the model is new ask how the user wants to handle it
+			this.askBasicVersionInfo();
+			
+			//next we need to set things up if the model hasn't been versioned before, if it hasn't then we should just be able to go
+			//straight to versioning it in the chosen working directory
+			if(versionModel.getRepositoryId()==null) {
+				//always start with where the working directory will be
+				File workingDir = setupWorkingDirectory();
+				
+				//if it's the first time versioning, need to know if we are creating a brand new repository or adding to an existing one
+				if(createNewRepository)
+					versionToNewRepository(workingDir);
+				else
+					versionToExistingRepository(workingDir);
+			}
+			else {
+				//if the repository id is not null then the rest of the model properties should allow us to version the model without further prompting
+				versionExistingVersionedModel();
+			}
+			
+			//lastly, if the user chose to push the versioned model to a remote repository, we need to confirm the information for that repository
+			if(this.pushToRemoteOnVersion) {
+				pushModelToRemoteRepository();
+			}
+			
+			//make sure we save the model after all this so that the properties are kept
+			//TODO doesn't work because the model doesn't think it is dirty, need to fix...
+			IEditorModelManager.INSTANCE.saveModelAs(model);
+
+		} catch (VersioningException e) {
+			MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("Versioning Issue");
+			dialog.setMessage(e.getMessage());		
+			dialog.open();
+			e.printStackTrace();
 		}
-		else {
-			//if the repository id is not null then the rest of the model properties should allow us to version the model without further prompting
-			versionExistingVersionedModel();
-		}
-		
 
     }
+	
+	private void pushModelToRemoteRepository() throws VersioningException {
+		URI remoteRepoLocation = null;
+		
+		
+    	//then the remote info
+    	RemoteRepositoryDialog dialog = new RemoteRepositoryDialog(Display.getCurrent().getActiveShell());
+    	dialog.setRemoteRepository(versionModel.getRemoteRepoLocation());
+    	dialog.setRemoteUser(versionModel.getRemoteUser());
+    	dialog.create();
+    	dialog.open();
+    	
+    	try {
+    		remoteRepoLocation = new URI(dialog.getRepositoryToClone());
+		} catch (URISyntaxException e) {
+			MessageBox errorDialog = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR | SWT.OK);
+			errorDialog.setText("Remote repository error");
+			errorDialog.setMessage("Sorry, the URI for the remote repository does not appear to be valid.");
+
+			dialog.open(); 
+
+			e.printStackTrace();
+		}
+    	
+    	//set the values
+    	String remoteRepoUser = dialog.getRepoUser();
+    	String remoteRepoPassword = dialog.getRepoPassword();
+    	versionModel.setRemoteRepoLocation(remoteRepoLocation.toString());
+    	versionModel.setRemoteUser(remoteRepoUser);
+    	
+    	//now call the git wrapper to perform the push
+    	gitRepo.pushModelToRemoteRepo(remoteRepoLocation, remoteRepoUser, remoteRepoPassword, versionModel.getRepoBranch());
+	}
 	
 	private void versionExistingVersionedModel() throws VersioningException {
 		//get the working directory location
@@ -218,6 +270,7 @@ public class ModelVersioner implements IModelExporter {
     	
     	createNewRepository = dialog.createNewRepository();
     	this.versionComment = dialog.getVersionComment();
+    	this.pushToRemoteOnVersion = dialog.pushToRemoteOnVersion();
     }
     
     private void askRepoInfo() {
@@ -230,7 +283,7 @@ public class ModelVersioner implements IModelExporter {
     }
     
     private void askExistingRepoInfo() {
-    	CloneRepositoryDialog dialog = new CloneRepositoryDialog(Display.getCurrent().getActiveShell());
+    	RemoteRepositoryDialog dialog = new RemoteRepositoryDialog(Display.getCurrent().getActiveShell());
     	dialog.create();
     	dialog.open();
     	
@@ -248,6 +301,8 @@ public class ModelVersioner implements IModelExporter {
     	
     	repoUser = dialog.getRepoUser();
     	repoPassword = dialog.getRepoPassword();
+    	versionModel.setRemoteRepoLocation(repoToClone.toString());
+    	versionModel.setRemoteUser(repoUser);
     	
     }
     

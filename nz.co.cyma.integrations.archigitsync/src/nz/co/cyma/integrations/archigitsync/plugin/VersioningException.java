@@ -16,18 +16,12 @@ import org.eclipse.swt.widgets.MessageBox;
 public class VersioningException extends IOException {
 	public VersioningException (String message) {
 		
-		MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR | SWT.OK);
-		dialog.setText("Versioning Issue");
-		dialog.setMessage(message);
+		super(message);
 	}
 	
 	public VersioningException (String message, Throwable exception) {
 		
-		MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR | SWT.OK);
-		dialog.setText("Versioning Issue");
-		dialog.setMessage(message);
-
-		//throw new IOException(message, exception);
+		super(message, exception);
 		
 
 	}

@@ -19,10 +19,13 @@ import org.eclipse.swt.widgets.Text;
 
 	  private Button[] btnRepoChoice;
 	  private Text txtVersionComment;
+	  private Button chkPushToRemoteChoice;
+	  
 
 	  private boolean createNewRepo;
 	  private String versionComment;
 	  private boolean firstVersioning = false;
+	  private boolean pushToRemoteOnVersion = false;
 
 	  public VersionModelDialog(Shell parentShell, boolean firstVersioning) {
 		  super(parentShell);
@@ -48,6 +51,7 @@ import org.eclipse.swt.widgets.Text;
 	    if (this.firstVersioning)
 	    	createRepositoryChoice(container);
 	    this.createVersionComment(container);
+	    createPushToRemoteChoice(container);
 
 	    return area;
 	  }
@@ -103,6 +107,20 @@ import org.eclipse.swt.widgets.Text;
 	    txtVersionComment.setLayoutData(dataRepoDesc);
 	    //txtVersionComment.set
 	  }
+	  
+	  private void createPushToRemoteChoice(Composite container) {
+		    Label lbtPushToRemoteChoice = new Label(container, SWT.NONE);
+		    lbtPushToRemoteChoice.setText("Push The Change To A Remote Repository?");
+
+		    GridData dataPush = new GridData();
+		    dataPush.grabExcessHorizontalSpace = true;
+		    dataPush.horizontalAlignment = GridData.FILL;
+		    dataPush.heightHint= 40;
+		    
+		    chkPushToRemoteChoice = new Button(container, SWT.CHECK);
+		    chkPushToRemoteChoice.setText("Push?");
+		    
+		  }
 
 
 
@@ -117,6 +135,7 @@ import org.eclipse.swt.widgets.Text;
 		if (btnRepoChoice!=null)
 			this.createNewRepo = this.btnRepoChoice[1].getSelection();
 	    this.versionComment = this.txtVersionComment.getText();
+	    this.pushToRemoteOnVersion = this.chkPushToRemoteChoice.getSelection();
 	  }
 
 	  @Override
@@ -133,4 +152,7 @@ import org.eclipse.swt.widgets.Text;
 		    return this.versionComment;
 		  }
 
+	  public boolean pushToRemoteOnVersion() {
+		  return this.pushToRemoteOnVersion;
+	  }
 }
