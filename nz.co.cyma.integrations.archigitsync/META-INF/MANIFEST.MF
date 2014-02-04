@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Archi Git Plugin
 Bundle-SymbolicName: nz.co.cyma.integrations.archigitsync.plugin;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.6.01
 Bundle-Vendor: Cyma Ltd
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- uk.ac.bolton.archimate.editor
+ com.archimatetool.editor
 Export-Package: nz.co.cyma.integrations.archigitsync.plugin,
  nz.co.cyma.integrations.archigitsync.plugin.git
 Bundle-ClassPath: lib/org.eclipse.jgit-3.1.0.201310021548-r.jar,

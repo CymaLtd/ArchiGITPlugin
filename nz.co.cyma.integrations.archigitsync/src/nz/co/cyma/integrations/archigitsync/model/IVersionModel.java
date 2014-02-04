@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.List;
 
 import nz.co.cyma.integrations.archigitsync.model.impl.VersionElement;
-import uk.ac.bolton.archimate.model.FolderType;
-import uk.ac.bolton.archimate.model.IArchimateDiagramModel;
-import uk.ac.bolton.archimate.model.IArchimateElement;
-import uk.ac.bolton.archimate.model.IDiagramModel;
-import uk.ac.bolton.archimate.model.IFolder;
-import uk.ac.bolton.archimate.model.IRelationship;
+import com.archimatetool.model.FolderType;
+import com.archimatetool.model.IArchimateDiagramModel;
+import com.archimatetool.model.IArchimateElement;
+import com.archimatetool.model.IDiagramModel;
+import com.archimatetool.model.IFolder;
+import com.archimatetool.model.IRelationship;
 
 public interface IVersionModel {
 	//public void createBusinessVersionObjects(IFolder folder);

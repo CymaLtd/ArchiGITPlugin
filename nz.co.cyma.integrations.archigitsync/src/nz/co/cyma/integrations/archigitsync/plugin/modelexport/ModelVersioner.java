@@ -30,12 +30,14 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
-import uk.ac.bolton.archimate.editor.model.IEditorModelManager;
-import uk.ac.bolton.archimate.editor.model.IModelExporter;
-import uk.ac.bolton.archimate.model.FolderType;
-import uk.ac.bolton.archimate.model.IArchimateElement;
-import uk.ac.bolton.archimate.model.IArchimateModel;
-import uk.ac.bolton.archimate.model.IFolder;
+import com.archimatetool.editor.model.IModelImporter;
+
+import com.archimatetool.editor.model.IEditorModelManager;
+import com.archimatetool.editor.model.IModelExporter;
+import com.archimatetool.model.FolderType;
+import com.archimatetool.model.IArchimateElement;
+import com.archimatetool.model.IArchimateModel;
+import com.archimatetool.model.IFolder;
 
 /**
  * @author michael
@@ -53,6 +55,9 @@ public class ModelVersioner implements IModelExporter {
 	private String repoPassword = null;
 	private String versionComment = "";
 	private boolean pushToRemoteOnVersion = false;
+	
+    public ModelVersioner() {
+    }
 	
 	@Override
     public void export(IArchimateModel model) throws IOException {

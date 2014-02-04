@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
-import uk.ac.bolton.archimate.model.IFolder;
-import uk.ac.bolton.archimate.model.IProperty;
+import com.archimatetool.model.IFolder;
+import com.archimatetool.model.IProperty;
 
 public class ArchiUtils {
 	public static Map<String, IProperty> getPropertiesMap(EList<IProperty> archPropertyList) {

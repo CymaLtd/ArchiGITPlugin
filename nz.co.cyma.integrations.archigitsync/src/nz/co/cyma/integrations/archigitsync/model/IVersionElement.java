@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
-import uk.ac.bolton.archimate.model.IProperty;
+import com.archimatetool.model.IProperty;
 
 public interface IVersionElement {
 	public String getId();

@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
-import uk.ac.bolton.archimate.model.FolderType;
-import uk.ac.bolton.archimate.model.IArchimateElement;
-import uk.ac.bolton.archimate.model.IProperties;
-import uk.ac.bolton.archimate.model.IProperty;
+import com.archimatetool.model.FolderType;
+import com.archimatetool.model.IArchimateElement;
+import com.archimatetool.model.IProperties;
+import com.archimatetool.model.IProperty;
 import nz.co.cyma.integrations.archigitsync.model.IFolderPath;
 import nz.co.cyma.integrations.archigitsync.model.IVersionElement;
 import nz.co.cyma.integrations.archigitsync.model.VersionElementAttribute;

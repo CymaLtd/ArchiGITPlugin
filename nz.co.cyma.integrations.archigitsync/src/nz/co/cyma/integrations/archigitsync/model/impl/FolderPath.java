@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 
 
-import uk.ac.bolton.archimate.model.FolderType;
+import com.archimatetool.model.FolderType;
 
 import nz.co.cyma.integrations.archigitsync.model.IFolderPath;
 

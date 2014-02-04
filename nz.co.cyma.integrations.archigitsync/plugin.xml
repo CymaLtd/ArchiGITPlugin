@@ -2,15 +2,15 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="uk.ac.bolton.archimate.editor.exportHandler">
+         point="com.archimatetool.editor.exportHandler">
       <exportHandler
             class="nz.co.cyma.integrations.archigitsync.plugin.modelexport.ModelVersioner"
-            id="uk.ac.bolton.archimate.import_export_example.exportHandler"
+            id="com.archimatetool.import_export_example.exportHandler"
             label="Version model...">
       </exportHandler>
    </extension>
    <extension
-         point="uk.ac.bolton.archimate.editor.importHandler">
+         point="com.archimatetool.editor.importHandler">
       <importHandler
             class="nz.co.cyma.integrations.archigitsync.plugin.modelimport.LocalRepositoryImport"
             id="nz.co.cyma.integrations.archigitsync.plugin.modelimport.LocalRepositoryImport"

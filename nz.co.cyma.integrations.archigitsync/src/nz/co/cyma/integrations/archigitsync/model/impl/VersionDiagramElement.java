@@ -7,12 +7,12 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
-import uk.ac.bolton.archimate.model.FolderType;
-import uk.ac.bolton.archimate.model.IArchimateElement;
-import uk.ac.bolton.archimate.model.IDiagramModel;
-import uk.ac.bolton.archimate.model.IProperties;
-import uk.ac.bolton.archimate.model.IProperty;
-import uk.ac.bolton.archimate.model.IRelationship;
+import com.archimatetool.model.FolderType;
+import com.archimatetool.model.IArchimateElement;
+import com.archimatetool.model.IDiagramModel;
+import com.archimatetool.model.IProperties;
+import com.archimatetool.model.IProperty;
+import com.archimatetool.model.IRelationship;
 import nz.co.cyma.integrations.archigitsync.model.VersionDiagramFeatureAttribute;
 import nz.co.cyma.integrations.archigitsync.model.IFolderPath;
 import nz.co.cyma.integrations.archigitsync.model.IVersionDiagramElement;

@@ -5,9 +5,9 @@ import nz.co.cyma.integrations.archigitsync.model.IVersionModel;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
-import uk.ac.bolton.archimate.model.IArchimateFactory;
-import uk.ac.bolton.archimate.model.IArchimateModel;
-import uk.ac.bolton.archimate.model.impl.ArchimateFactory;
+import com.archimatetool.model.IArchimateFactory;
+import com.archimatetool.model.IArchimateModel;
+import com.archimatetool.model.impl.ArchimateFactory;
 
 
 /**

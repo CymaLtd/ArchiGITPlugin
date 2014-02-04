@@ -31,26 +31,26 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 
-import uk.ac.bolton.archimate.editor.model.IEditorModelManager;
-import uk.ac.bolton.archimate.editor.model.IModelImporter;
-import uk.ac.bolton.archimate.model.IArchimateDiagramModel;
-import uk.ac.bolton.archimate.model.IArchimateElement;
-import uk.ac.bolton.archimate.model.IArchimateFactory;
-import uk.ac.bolton.archimate.model.IArchimateModel;
-import uk.ac.bolton.archimate.model.IArchimatePackage;
-import uk.ac.bolton.archimate.model.IDiagramModelArchimateConnection;
-import uk.ac.bolton.archimate.model.IDiagramModelArchimateObject;
-import uk.ac.bolton.archimate.model.IDiagramModelBendpoint;
-import uk.ac.bolton.archimate.model.IDiagramModelConnection;
-import uk.ac.bolton.archimate.model.IDiagramModelGroup;
-import uk.ac.bolton.archimate.model.IDiagramModelNote;
-import uk.ac.bolton.archimate.model.IDiagramModelObject;
-import uk.ac.bolton.archimate.model.IDocumentable;
-import uk.ac.bolton.archimate.model.IFolder;
-import uk.ac.bolton.archimate.model.IProperty;
-import uk.ac.bolton.archimate.model.IRelationship;
-import uk.ac.bolton.archimate.model.ITextContent;
-import uk.ac.bolton.archimate.model.impl.ArchimateFactory;
+import com.archimatetool.editor.model.IEditorModelManager;
+import com.archimatetool.editor.model.IModelImporter;
+import com.archimatetool.model.IArchimateDiagramModel;
+import com.archimatetool.model.IArchimateElement;
+import com.archimatetool.model.IArchimateFactory;
+import com.archimatetool.model.IArchimateModel;
+import com.archimatetool.model.IArchimatePackage;
+import com.archimatetool.model.IDiagramModelArchimateConnection;
+import com.archimatetool.model.IDiagramModelArchimateObject;
+import com.archimatetool.model.IDiagramModelBendpoint;
+import com.archimatetool.model.IDiagramModelConnection;
+import com.archimatetool.model.IDiagramModelGroup;
+import com.archimatetool.model.IDiagramModelNote;
+import com.archimatetool.model.IDiagramModelObject;
+import com.archimatetool.model.IDocumentable;
+import com.archimatetool.model.IFolder;
+import com.archimatetool.model.IProperty;
+import com.archimatetool.model.IRelationship;
+import com.archimatetool.model.ITextContent;
+import com.archimatetool.model.impl.ArchimateFactory;
 
 /**
  * @author michael
