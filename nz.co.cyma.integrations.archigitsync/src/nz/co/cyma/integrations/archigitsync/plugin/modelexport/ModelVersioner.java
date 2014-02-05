@@ -13,6 +13,7 @@ import java.util.Map;
 
 import nz.co.cyma.integrations.archigitsync.model.IVersionModel;
 import nz.co.cyma.integrations.archigitsync.model.IVersionModelPropertyConstants;
+import nz.co.cyma.integrations.archigitsync.plugin.DialogCancelException;
 import nz.co.cyma.integrations.archigitsync.plugin.VersioningException;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.RemoteRepositoryDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewModelDialog;
@@ -97,17 +98,25 @@ public class ModelVersioner implements IModelExporter {
 			//TODO doesn't work because the model doesn't think it is dirty, need to fix...
 			//IEditorModelManager.INSTANCE.saveModelAs(model);
 
-		} catch (VersioningException e) {
+		} 
+		catch (VersioningException e) {
+			if(this.gitRepo!=null)
+				gitRepo.close();
 			MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR | SWT.OK);
 			dialog.setText("Versioning Issue");
 			dialog.setMessage(e.getMessage());		
 			dialog.open();
 			e.printStackTrace();
 		}
+		catch(DialogCancelException e) {
+			if(this.gitRepo!=null)
+				gitRepo.close();
+			return;
+		}
 
     }
 	
-	private void pushModelToRemoteRepository() throws VersioningException {
+	private void pushModelToRemoteRepository() throws VersioningException, DialogCancelException {
 		URI remoteRepoLocation = null;
 		
 		
@@ -116,7 +125,9 @@ public class ModelVersioner implements IModelExporter {
     	dialog.setRemoteRepository(versionModel.getRemoteRepoLocation());
     	dialog.setRemoteUser(versionModel.getRemoteUser());
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	if(returnCode == RemoteRepositoryDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at remote repository dialog");
     	
     	try {
     		remoteRepoLocation = new URI(dialog.getRepositoryToClone());
@@ -203,7 +214,7 @@ public class ModelVersioner implements IModelExporter {
 
 	}
 	
-	private void versionToExistingRepository(File workingDirLocation) throws VersioningException {
+	private void versionToExistingRepository(File workingDirLocation) throws VersioningException, DialogCancelException {
 		//prompt for the remote repository information
 		this.askExistingRepoInfo();
 		
@@ -240,7 +251,7 @@ public class ModelVersioner implements IModelExporter {
 		
 	}
 	
-	private File setupWorkingDirectory() {
+	private File setupWorkingDirectory() throws DialogCancelException {
 		File repoLocation = this.askSaveDirectory();
 		versionModel.setWorkingDirLocation(repoLocation);
 		versionModel.setRepoBranch(GitWrapper.DEFAULT_GIT_BRANCH_NAME);
@@ -250,15 +261,16 @@ public class ModelVersioner implements IModelExporter {
 	
     /**
      * Ask user for the directory to save to
+     * @throws DialogCancelException 
      */
-    private File askSaveDirectory() {
+    private File askSaveDirectory() throws DialogCancelException {
         DirectoryDialog dialog = new DirectoryDialog(Display.getCurrent().getActiveShell(), SWT.SAVE);
         //dialog.setFilterPath(this.versionModel.getModelId().toString());
         dialog.setText("GIT repository working directory location");
         //dialog.setFilterExtensions(new String[] { MY_EXTENSION_WILDCARD, "*.*" } ); //$NON-NLS-1$
         String path = dialog.open();
         if(path == null) {
-            return null;
+             throw new DialogCancelException("User cancelled out of working directory choice");
         }
         
         
@@ -267,30 +279,37 @@ public class ModelVersioner implements IModelExporter {
         return file;
     }
     
-    private void askBasicVersionInfo() {
+    private void askBasicVersionInfo() throws DialogCancelException {
     	//if the version models repository id is null then this model can't have been versioned before, so ask
     	VersionModelDialog dialog = new VersionModelDialog(Display.getCurrent().getActiveShell(), versionModel.getRepositoryId()==null);
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	if(returnCode == VersionModelDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at basic info dialog");
     	
     	createNewRepository = dialog.createNewRepository();
     	this.versionComment = dialog.getVersionComment();
     	this.pushToRemoteOnVersion = dialog.pushToRemoteOnVersion();
     }
     
-    private void askRepoInfo() {
+    private void askRepoInfo() throws DialogCancelException {
     	NewRepositoryDialog dialog = new NewRepositoryDialog(Display.getCurrent().getActiveShell());
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	if(returnCode == NewRepositoryDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at repository info dialog");
     	
     	this.versionModel.setRepositoryId(dialog.getRepositoryId());
     	this.versionModel.setRepositoryDescription(dialog.getRepoDescription());
     }
     
-    private void askExistingRepoInfo() {
+    private void askExistingRepoInfo() throws DialogCancelException {
     	RemoteRepositoryDialog dialog = new RemoteRepositoryDialog(Display.getCurrent().getActiveShell());
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	
+    	if(returnCode == RemoteRepositoryDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at ask for existing repository dialog");
     	
     	try {
 			repoToClone = new URI(dialog.getRepositoryToClone());
@@ -311,11 +330,14 @@ public class ModelVersioner implements IModelExporter {
     	
     }
     
-    private void askModelUserInfo() {
+    private void askModelUserInfo() throws DialogCancelException {
     	NewModelDialog dialog = new NewModelDialog(Display.getCurrent().getActiveShell(), true, false);
     	dialog.setBranchList(gitRepo.getBranchList());
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	
+    	if(returnCode == NewModelDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at model user info dialog");
     	
     	this.versionModel.setModelUserName(dialog.getModelUser());
     	this.versionModel.setModelUserEmail(dialog.getModelUserEmail());

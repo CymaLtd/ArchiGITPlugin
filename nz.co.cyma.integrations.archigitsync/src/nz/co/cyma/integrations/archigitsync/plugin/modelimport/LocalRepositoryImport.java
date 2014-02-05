@@ -16,6 +16,7 @@ import nz.co.cyma.integrations.archigitsync.model.VersionElementAttribute;
 import nz.co.cyma.integrations.archigitsync.model.VersionRelationshipAttribute;
 import nz.co.cyma.integrations.archigitsync.model.impl.FolderPath;
 import nz.co.cyma.integrations.archigitsync.plugin.ArchiUtils;
+import nz.co.cyma.integrations.archigitsync.plugin.DialogCancelException;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.RemoteRepositoryDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewModelDialog;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.NewRepositoryDialog;
@@ -72,35 +73,42 @@ public class LocalRepositoryImport implements IModelImporter {
 	public void doImport() throws IOException {
 		
 		//create our new model and collect some info before checking out from the new repository
-		IArchimateModel model = IArchimateFactory.eINSTANCE.createArchimateModel();
-		model.setDefaults();
-		model.setName("Versioned Import");
-		
-		//find out where the local repository is
-		askCloneInfo(model);
-		
-		//clone the repository
-		GitWrapper.cloneArchiRepository(repoToClone, workingDir, repoUser, repoPassword);
-		
-		//get the model repo file from repository, if we can't find it, throw an error because it means
-		//this git repo is not an archi one
-		gitRepo = new GitWrapper(workingDir);
-		gitRepo.getExistingGitRepo();
-		gitRepo.checkoutModelFileFromMaster(IVersionModelPropertyConstants.MODEL_FILE_NAME+".yml");
-		//TODO check for existance of repo file
-		
-		//now ask for info that will allow the model we are about to import to continue to be versioned
-		//this will ask which branch contains the model we are importing
-		boolean saveToNewBranch = this.askModelUserInfo(model);
-		if (saveToNewBranch) {
-			gitRepo.createAndCheckoutBranchFromExistingBranch(ArchiUtils.getPropertiesMap(model.getProperties()).get(IVersionModelPropertyConstants.MODEL_REPO_BRANCH_PROPERTY_NAME).getValue(), this.chosenBranch);
+		IArchimateModel model;
+		try {
+			model = IArchimateFactory.eINSTANCE.createArchimateModel();
+			model.setDefaults();
+			model.setName("Versioned Import");
+			
+			//find out where the local repository is
+			askCloneInfo(model);
+			
+			//clone the repository
+			GitWrapper.cloneArchiRepository(repoToClone, workingDir, repoUser, repoPassword);
+			
+			//get the model repo file from repository, if we can't find it, throw an error because it means
+			//this git repo is not an archi one
+			gitRepo = new GitWrapper(workingDir);
+			gitRepo.getExistingGitRepo();
+			gitRepo.checkoutModelFileFromMaster(IVersionModelPropertyConstants.MODEL_FILE_NAME+".yml");
+			//TODO check for existance of repo file
+			
+			//now ask for info that will allow the model we are about to import to continue to be versioned
+			//this will ask which branch contains the model we are importing
+			boolean saveToNewBranch = this.askModelUserInfo(model);
+			if (saveToNewBranch) {
+				gitRepo.createAndCheckoutBranchFromExistingBranch(ArchiUtils.getPropertiesMap(model.getProperties()).get(IVersionModelPropertyConstants.MODEL_REPO_BRANCH_PROPERTY_NAME).getValue(), this.chosenBranch);
+			}
+			else {
+				gitRepo.checkoutRemoteBranch(chosenBranch);
+			}
+			
+			
+			gitRepo.close();
+		} catch (DialogCancelException e) {
+			if(this.gitRepo!=null)
+				gitRepo.close();
+			return;
 		}
-		else {
-			gitRepo.checkoutRemoteBranch(chosenBranch);
-		}
-		
-		
-		gitRepo.close();
 		
 		//now read in the repository info and set the relevant properties in the model
 		this.importRepositoryInfo(workingDir, model);
@@ -126,23 +134,18 @@ public class LocalRepositoryImport implements IModelImporter {
 		this.createModelProperty(model, IVersionModelPropertyConstants.MODEL_REPO_ID_PROPERTY_NAME, (String) repoInfo.get(IVersionModelPropertyConstants.MODEL_REPO_ID_PROPERTY_NAME));
 		this.createModelProperty(model, IVersionModelPropertyConstants.MODEL_REPO_DESCRIPTION_PROPERTY_NAME, (String) repoInfo.get(IVersionModelPropertyConstants.MODEL_REPO_DESCRIPTION_PROPERTY_NAME));
 	}
-	
-    private File askRepoDirectory() {
-    	DirectoryDialog dd = new DirectoryDialog(Display.getCurrent().getActiveShell(), SWT.OPEN);
-        //FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.OPEN);
-        //dialog.setFilterExtensions(new String[] { MY_EXTENSION_WILDCARD, "*.*" } ); //$NON-NLS-1$
-        String path = dd.open();
-        return path != null ? new File(path) : null;
-    }
+
     
-    private void askCloneInfo(IArchimateModel model) {
+    private void askCloneInfo(IArchimateModel model) throws DialogCancelException {
     	//first ask for the working directory
     	workingDir = this.askSaveDirectory();
     	
     	//then the clone info
     	RemoteRepositoryDialog dialog = new RemoteRepositoryDialog(Display.getCurrent().getActiveShell());
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	if(returnCode == RemoteRepositoryDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at remote repository dialog");
     	
     	try {
 			repoToClone = new URI(dialog.getRepositoryToClone());
@@ -164,14 +167,14 @@ public class LocalRepositoryImport implements IModelImporter {
     	this.createModelProperty(model, IVersionModelPropertyConstants.REMOTE_REPO_USER_PROPERTY_NAME, repoUser);
     }
     
-    private File askSaveDirectory() {
+    private File askSaveDirectory() throws DialogCancelException {
         DirectoryDialog dialog = new DirectoryDialog(Display.getCurrent().getActiveShell(), SWT.SAVE);
         //dialog.setFilterPath(this.versionModel.getModelId().toString());
         dialog.setText("GIT repository working directory location");
         //dialog.setFilterExtensions(new String[] { MY_EXTENSION_WILDCARD, "*.*" } ); //$NON-NLS-1$
         String path = dialog.open();
         if(path == null) {
-            return null;
+            throw new DialogCancelException("User cancelled working directory choice");
         }
         
         
@@ -180,11 +183,14 @@ public class LocalRepositoryImport implements IModelImporter {
         return file;
     }
     
-    private boolean askModelUserInfo(IArchimateModel model) {
+    private boolean askModelUserInfo(IArchimateModel model) throws DialogCancelException {
     	NewModelDialog dialog = new NewModelDialog(Display.getCurrent().getActiveShell(), true, true);
     	dialog.setBranchList(gitRepo.getBranchList());
     	dialog.create();
-    	dialog.open();
+    	int returnCode = dialog.open();
+    	
+    	if(returnCode == NewModelDialog.CANCEL)
+    		throw new DialogCancelException("User cancelled at model user info dialog");
     	
     	String remoteBranch = dialog.getBranchToSaveTo();
     	this.createModelProperty(model, IVersionModelPropertyConstants.MODEL_USER_PROPERTY_NAME, dialog.getModelUser());
