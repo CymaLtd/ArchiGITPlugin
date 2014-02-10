@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ import com.archimatetool.model.IDiagramModelConnection;
 import com.archimatetool.model.IDiagramModelGroup;
 import com.archimatetool.model.IDiagramModelNote;
 import com.archimatetool.model.IDiagramModelObject;
+import com.archimatetool.model.IDiagramModelReference;
 import com.archimatetool.model.IDocumentable;
 import com.archimatetool.model.IFolder;
 import com.archimatetool.model.IProperty;
@@ -330,6 +332,9 @@ public class LocalRepositoryImport implements IModelImporter {
     }
     
     private void createModelDiagrams(IArchimateModel model, Map objects) {
+    	List diagramRefList = new ArrayList();
+    	Map diagramModelMap = new HashMap();
+    	
     	for(Object objectKey: objects.keySet()) {
     		String elementId = (String) objectKey;
     		Map objectFeatureMap = (Map) objects.get(elementId);
@@ -398,9 +403,17 @@ public class LocalRepositoryImport implements IModelImporter {
     			
     			if(archiDiagramSpecificObject instanceof IDiagramModelGroup)
     				 ((IDocumentable) archiDiagramSpecificObject).setDocumentation((String)diagramSpecificElement.get(VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_DOCUMENTATION.getKeyName()));
-    			else
+    			else if (archiDiagramSpecificObject instanceof IDiagramModelNote)
     				 ((ITextContent) archiDiagramSpecificObject).setContent((String)diagramSpecificElement.get(VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_DOCUMENTATION.getKeyName()));
-    			
+    			//if it's a diagram reference we need to add it to a list so we can update it after we've gone through all the diagrams
+    			else if (archiDiagramSpecificObject instanceof IDiagramModelReference)
+    			{
+    				Object[] info = new Object[2];
+    				info[0] = (IDiagramModelReference) archiDiagramSpecificObject;
+    				info[1] = (String)diagramSpecificElement.get(VersionDiagramFeatureAttribute.DIAGRAM_REFERENCE_ID.getKeyName());
+    				diagramRefList.add(info);
+    			}
+    				
     			diagram.getChildren().add(archiDiagramSpecificObject);
     			archiDiagramObjects.put(archiDiagramSpecificObject.getId(), archiDiagramSpecificObject);
     		}
@@ -418,6 +431,17 @@ public class LocalRepositoryImport implements IModelImporter {
     		//handle folders if needs be
     		handleFolders(folderString, typeFolder, diagram);	
     		
+    		//put the diagram in a map because we need to find it for any diagram reference elements
+    		diagramModelMap.put(diagram.getId(), diagram);
+    		
+    	}
+    	
+    	//The last thing we need to do is update any diagram references with the diagram they are referencing
+    	Iterator i = diagramRefList.iterator();
+    	while(i.hasNext()) {
+    		Object info[] = (Object[]) i.next();
+    		IDiagramModelReference ref = (IDiagramModelReference) info[0];
+    		ref.setReferencedModel((IArchimateDiagramModel) diagramModelMap.get(info[1]));
     	}
     }
     

@@ -30,7 +30,8 @@ public enum VersionDiagramFeatureAttribute {
 	BEND_POINT_END_Y ("bendpointEndY"),
 	DIAGRAM_CONNECTION_TYPE ("diagramConnectionType"),
 	DIAGRAM_CONNECTION_TARGET ("diagramConnectionTarget"),
-	NOTE_CONNECTION_TARGET_ID ("noteConnectionTargetId");
+	NOTE_CONNECTION_TARGET_ID ("noteConnectionTargetId"),
+	DIAGRAM_REFERENCE_ID ("diagramReferenceId");
 	
 	private final String keyName;
 	

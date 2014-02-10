@@ -22,6 +22,7 @@ import com.archimatetool.model.IDiagramModelConnection;
 import com.archimatetool.model.IDiagramModelGroup;
 import com.archimatetool.model.IDiagramModelNote;
 import com.archimatetool.model.IDiagramModelObject;
+import com.archimatetool.model.IDiagramModelReference;
 import com.archimatetool.model.IDocumentable;
 import com.archimatetool.model.IFolder;
 import com.archimatetool.model.IProperty;
@@ -215,12 +216,20 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 					IDiagramModelGroup groupObject = (IDiagramModelGroup) object;
 					createVersionDiagramObjects(groupObject.getChildren(), folderPath, versionDiagramElement, object.getId());
 				}
-				else {
+				else if (object instanceof IDiagramModelNote) {
 					IDiagramModelNote noteObject = (IDiagramModelNote) object;
 					EList<IDiagramModelConnection> connectionList = noteObject.getSourceConnections();
 					for(IDiagramModelConnection connection: connectionList) {
 						IDiagramModelConnection noteConnection = (IDiagramModelConnection) connection;
 						this.handleDiagramNoteRelationshipFeatures(true, noteObject.getId(), versionDiagramElement, noteConnection);
+					}
+				}
+				else if (object instanceof IDiagramModelReference) {
+					IDiagramModelReference refObject = (IDiagramModelReference) object;
+					EList<IDiagramModelConnection> connectionList = refObject.getSourceConnections();
+					for(IDiagramModelConnection connection: connectionList) {
+						IDiagramModelConnection noteConnection = (IDiagramModelConnection) connection;
+						this.handleDiagramNoteRelationshipFeatures(true, refObject.getId(), versionDiagramElement, noteConnection);
 					}
 				}
 				
@@ -249,8 +258,10 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 		
 		if(diagramElement instanceof IDiagramModelGroup)
 			versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_DOCUMENTATION, ((IDocumentable) diagramElement).getDocumentation());
-		else
+		else if (diagramElement instanceof IDiagramModelNote)
 			versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_DOCUMENTATION, ((ITextContent) diagramElement).getContent());
+		else if (diagramElement instanceof IDiagramModelReference)
+			versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.DIAGRAM_REFERENCE_ID, ((IDiagramModelReference) diagramElement).getReferencedModel().getId());
 		
 		if(parentId !=null)
 			versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.PARENT_ELEMENT_ID, parentId);
