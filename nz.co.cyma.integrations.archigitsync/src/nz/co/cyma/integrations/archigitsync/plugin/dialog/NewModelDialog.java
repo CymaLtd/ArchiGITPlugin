@@ -19,13 +19,21 @@ import org.eclipse.swt.widgets.Text;
 
 	public class NewModelDialog extends TitleAreaDialog {
 
+		private static int BRANCH_ID = 0;
+		private static int BRANCH_NAME = 1;
+		private static int BRANCH_DESCRIPTION = 2;
+		
 	  private Text txtModelUser;
 	  private Text txtModelUserEmail;
+	  private Text txtBranchComment;
+	  private Text txtBranchName;
 	  private Combo cmbBranchList;
 	  private Combo cmbImportBranchList;
 
 	  private String modelUser;
 	  private String modelUserEmail;
+	  private String branchComment;
+	  private String branchName;
 	  private String chosenBranch;
 	  private String chosenImportBranch;
 	  private String [] branchList;
@@ -57,9 +65,14 @@ import org.eclipse.swt.widgets.Text;
 
 	    createModelUser(container);
 	    this.createModelUserEmail(container);
-	    if(this.importMode)
+	    if(this.importMode) 
 	    	this.createImportFromBranchCombo(container);
+	    
 	    this.createBranchCombo(container);
+	    if(!this.importMode) {
+		    this.createBranchName(container);
+		    this.createBranchComment(container);
+	    }
 
 	    return area;
 	  }
@@ -88,15 +101,45 @@ import org.eclipse.swt.widgets.Text;
 	    txtModelUserEmail.setLayoutData(dataModelUserEmail);
 	  }
 	  
+	  private void createBranchName(Composite container) {
+		    Label lbtBranchName = new Label(container, SWT.NONE);
+		    lbtBranchName.setText("Model Name");
+
+		    GridData dataBranchName = new GridData();
+		    dataBranchName.grabExcessHorizontalSpace = true;
+		    dataBranchName.horizontalAlignment = GridData.FILL;
+
+		    txtBranchName = new Text(container, SWT.BORDER);
+		    txtBranchName.setLayoutData(dataBranchName);
+		    txtBranchName.setEnabled(!importMode);
+		  }
+	  
+	  private void createBranchComment(Composite container) {
+		    Label lbtComment = new Label(container, SWT.NONE);
+		    lbtComment.setText("Model Description");
+
+		    GridData dataBranchComment = new GridData();
+		    dataBranchComment.grabExcessHorizontalSpace = true;
+		    dataBranchComment.horizontalAlignment = GridData.FILL;
+		    dataBranchComment.heightHint= 40;
+		    
+
+		    txtBranchComment = new Text(container, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		    txtBranchComment.setLayoutData(dataBranchComment);
+		    txtBranchComment.setEnabled(!importMode);
+		    //txtVersionComment.set
+		  }
+	  
 	  private void createBranchCombo(Composite container) {
 	    Label lbtSaveToBranch = new Label(container, SWT.NONE);
-	    lbtSaveToBranch.setText("Branch Name To Save Model To");
+	    lbtSaveToBranch.setText("Branch Name/Id To Save Model To");
 	    
 	    GridData dataBranch = new GridData();
 	    dataBranch.grabExcessHorizontalSpace = true;
 	    dataBranch.horizontalAlignment = GridData.FILL;
 
 	    this.cmbBranchList = new Combo(container, SWT.BORDER);
+
 	    cmbBranchList.setItems(branchList);
 	    cmbBranchList.setLayoutData(dataBranch);
 	    
@@ -118,7 +161,12 @@ import org.eclipse.swt.widgets.Text;
 					}
 				}
 				
-			   
+//MJT Can't do this at the moment
+//				//update the name & comment to reflect the branch chosen
+//			    if(cmbBranchList.getSelectionIndex()>=0) {
+//			    	txtBranchName.setText(branchList[cmbBranchList.getSelectionIndex()][BRANCH_NAME]);
+//			    	txtBranchComment.setText(branchList[cmbBranchList.getSelectionIndex()][BRANCH_DESCRIPTION]);
+//			    }
 			    	
 				
 				super.focusLost(e);
@@ -156,6 +204,7 @@ import org.eclipse.swt.widgets.Text;
 		    dataBranch.horizontalAlignment = GridData.FILL;
 
 		    this.cmbImportBranchList = new Combo(container, SWT.BORDER);
+
 		    cmbImportBranchList.setItems(branchList);
 		    cmbImportBranchList.setLayoutData(dataBranch);
 		    
@@ -179,6 +228,11 @@ import org.eclipse.swt.widgets.Text;
 	    this.chosenBranch = (this.cmbBranchList.getText().equals("")?"master":this.cmbBranchList.getText());
 	    if(cmbImportBranchList!=null)
 	    	this.chosenImportBranch = (this.cmbImportBranchList.getText().equals("")?"master":this.cmbImportBranchList.getText());
+	    if(txtBranchComment!=null)
+	    	this.branchComment = txtBranchComment.getText();
+	    
+	    if(txtBranchName!=null)
+	    	this.branchName = txtBranchName.getText();
 	  }
 
 	  @Override
@@ -197,6 +251,25 @@ import org.eclipse.swt.widgets.Text;
 
 	  public void setBranchList(String [] branchList) {
 		  this.branchList = branchList;
+	  }
+	  
+	  public void setBranchComment(String comment) {
+		  this.branchComment = comment;
+		  if(comment!=null)
+			  this.txtBranchComment.setText(comment);
+	  }
+	  
+	  public String getBranchComment() {
+		  return this.branchComment;
+	  }
+	  
+	  public void setBranchName(String name) {
+		  this.branchName = name;
+		  this.txtBranchName.setText(name);
+	  }
+	  
+	  public String getBranchName() {
+		  return this.branchName;
 	  }
 	  
 	  public String getBranchToSaveTo() {

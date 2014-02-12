@@ -52,6 +52,7 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 	private Map<String, IVersionElement> diagramElements = null;
 	
 	private String modelName = null;
+	private String modelDescription = null;
 	private File versionWorkingDir = null;
 	private File versionRepoDir = null;
 	private Preferences versionPrefs = null;
@@ -417,7 +418,12 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 
 	@Override
 	public String getModelName() {
-		return this.archiModel.getName();
+		if(this.modelName == null) {
+			this.modelName = this.archiModel.getName();
+		}
+		
+		return this.modelName;
+		
 	}
 
 	@Override
@@ -445,6 +451,26 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 		this.repositoryId = repositoryId;
 		this.setArchiModelProperty(MODEL_REPO_ID_PROPERTY_NAME, repositoryId);
 
+	}
+	
+	public void setModelName(String name) {
+		this.modelName = name;
+		this.archiModel.setName(name);
+	}
+	
+	
+	
+	public void setModelDescription(String description) {
+		this.modelDescription = description;
+		this.archiModel.setPurpose(description);
+	}
+	
+	public String getModelDescription() {
+		if(this.modelDescription == null) {
+			this.modelDescription = this.archiModel.getPurpose();
+		}
+		
+		return this.modelDescription;
 	}
 
 	public String getRepositoryDescription() {

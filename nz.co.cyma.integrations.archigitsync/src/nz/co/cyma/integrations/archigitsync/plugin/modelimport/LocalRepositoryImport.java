@@ -114,6 +114,7 @@ public class LocalRepositoryImport implements IModelImporter {
 		
 		//now read in the repository info and set the relevant properties in the model
 		this.importRepositoryInfo(workingDir, model);
+		this.importBranchInfo(workingDir, model);
 		
 		//now try to import the objects into the repository
 		this.importObjects(model);
@@ -135,6 +136,20 @@ public class LocalRepositoryImport implements IModelImporter {
 		
 		this.createModelProperty(model, IVersionModelPropertyConstants.MODEL_REPO_ID_PROPERTY_NAME, (String) repoInfo.get(IVersionModelPropertyConstants.MODEL_REPO_ID_PROPERTY_NAME));
 		this.createModelProperty(model, IVersionModelPropertyConstants.MODEL_REPO_DESCRIPTION_PROPERTY_NAME, (String) repoInfo.get(IVersionModelPropertyConstants.MODEL_REPO_DESCRIPTION_PROPERTY_NAME));
+	}
+	
+	private void importBranchInfo(File workingDir, IArchimateModel model) {
+		
+		Map repoInfo;
+		try {
+			repoInfo = YamlReader.readVersionObject(new File(workingDir.toString() + File.separatorChar + IVersionModelPropertyConstants.BRANCH_FILE_NAME + ".yml"));
+		} catch (IOException e) {
+			//the file might not be there, so if we get an error just exit
+			return;
+		}
+		
+		model.setName((String) repoInfo.get(IVersionModelPropertyConstants.BRANCH_NAME_PROPERTY_NAME));
+		model.setPurpose((String) repoInfo.get(IVersionModelPropertyConstants.BRANCH_DESCRIPTION_PROPERTY_NAME));
 	}
 
     

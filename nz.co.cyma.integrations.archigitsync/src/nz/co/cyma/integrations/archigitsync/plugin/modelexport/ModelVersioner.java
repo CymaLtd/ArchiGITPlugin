@@ -23,7 +23,10 @@ import nz.co.cyma.integrations.archigitsync.plugin.git.GitWrapper;
 import nz.co.cyma.integrations.archigitsync.plugin.yaml.YamlReader;
 import nz.co.cyma.integrations.archigitsync.plugin.yaml.YamlWriter;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -38,6 +41,7 @@ import com.archimatetool.editor.model.IModelExporter;
 import com.archimatetool.model.FolderType;
 import com.archimatetool.model.IArchimateElement;
 import com.archimatetool.model.IArchimateModel;
+import com.archimatetool.model.IArchimatePackage;
 import com.archimatetool.model.IFolder;
 
 /**
@@ -95,6 +99,7 @@ public class ModelVersioner implements IModelExporter {
 			}
 			
 			//make sure we save the model after all this so that the properties are kept
+			//model.eNotify(new ENotificationImpl((InternalEObject) model, Notification.SET, IArchimatePackage.ARCHIMATE_MODEL__PURPOSE, "", model.getPurpose()));
 			//TODO doesn't work because the model doesn't think it is dirty, need to fix...
 			//IEditorModelManager.INSTANCE.saveModelAs(model);
 
@@ -158,6 +163,7 @@ public class ModelVersioner implements IModelExporter {
 		gitRepo.getExistingGitRepo();
 		
 		//write and remove files to/from the archiMate objects as files to the working directory
+		VersionModelFileWriter.updateBranchFile(workingDirLocation, versionModel.getRepoBranch(), versionModel.getModelName(), versionModel.getModelDescription());
 		VersionModelFileWriter modelFileWriter = new VersionModelFileWriter(versionModel);
 		modelFileWriter.writeModel();
 		
@@ -181,13 +187,15 @@ public class ModelVersioner implements IModelExporter {
     		try {
 				gitRepo.initialiseGitRepo();
 				this.askRepoInfo();
-				this.askModelUserInfo();
+				
+				this.askModelUserInfo(gitRepo.getBranchList());
 				
 				//set up the repo file
 				VersionModelFileWriter.createModelFile(repoLocation, versionModel.getRepositoryId(), versionModel.getRepositoryDescription());
 				gitRepo.commitArchiFilesToGit(versionModel.getModelUserName(), versionModel.getModelUserEmail(), this.versionComment);
 				
 				//write and remove files to/from the archiMate objects as files to the working directory
+				VersionModelFileWriter.updateBranchFile(repoLocation, versionModel.getRepoBranch(), versionModel.getModelName(), versionModel.getModelDescription());
 				VersionModelFileWriter modelFileWriter = new VersionModelFileWriter(versionModel);
 				modelFileWriter.writeModel();
 				
@@ -232,10 +240,11 @@ public class ModelVersioner implements IModelExporter {
 		this.setupRepoInfo(workingDirLocation);
 		
 		//get the model and branch information and create the new branch this model will go on
-		this.askModelUserInfo();
+		this.askModelUserInfo(gitRepo.getBranchList());
 
 		
 		//write and remove files to/from the archiMate objects as files to the working directory
+		VersionModelFileWriter.updateBranchFile(workingDirLocation, versionModel.getRepoBranch(), versionModel.getModelName(), versionModel.getModelDescription());
 		VersionModelFileWriter modelFileWriter = new VersionModelFileWriter(versionModel);
 		modelFileWriter.writeModel();
 		
@@ -250,6 +259,7 @@ public class ModelVersioner implements IModelExporter {
 		gitRepo.close();
 		
 	}
+	
 	
 	private File setupWorkingDirectory() throws DialogCancelException {
 		File repoLocation = this.askSaveDirectory();
@@ -330,10 +340,13 @@ public class ModelVersioner implements IModelExporter {
     	
     }
     
-    private void askModelUserInfo() throws DialogCancelException {
+    private void askModelUserInfo(String branchList[]) throws DialogCancelException {
     	NewModelDialog dialog = new NewModelDialog(Display.getCurrent().getActiveShell(), true, false);
-    	dialog.setBranchList(gitRepo.getBranchList());
+    	dialog.setBranchList(branchList);
+
     	dialog.create();
+    	dialog.setBranchName(versionModel.getModelName());
+    	dialog.setBranchComment(versionModel.getModelDescription());
     	int returnCode = dialog.open();
     	
     	if(returnCode == NewModelDialog.CANCEL)
@@ -342,6 +355,8 @@ public class ModelVersioner implements IModelExporter {
     	this.versionModel.setModelUserName(dialog.getModelUser());
     	this.versionModel.setModelUserEmail(dialog.getModelUserEmail());
     	this.versionModel.setRepoBranch(dialog.getBranchToSaveTo());
+    	this.versionModel.setModelName(dialog.getBranchName());
+    	this.versionModel.setModelDescription(dialog.getBranchComment());
     }
     
 	private void setupRepoInfo(File workingDir) throws VersioningException {

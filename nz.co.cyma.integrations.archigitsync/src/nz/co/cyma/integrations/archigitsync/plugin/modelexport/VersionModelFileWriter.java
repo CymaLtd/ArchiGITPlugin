@@ -54,6 +54,20 @@ public class VersionModelFileWriter {
 		}
 	}
 	
+	public static void updateBranchFile(File workingDirectory, String branchId, String branchName, String branchDescription) throws VersioningException {
+		File branchFile = addYamlFileToDir(workingDirectory, IVersionModelPropertyConstants.BRANCH_FILE_NAME);
+		Map branchProperties = new HashMap();
+		branchProperties.put(IVersionModelPropertyConstants.BRANCH_ID_PROPERTY_NAME, branchId);
+		branchProperties.put(IVersionModelPropertyConstants.BRANCH_NAME_PROPERTY_NAME, branchName);
+		branchProperties.put(IVersionModelPropertyConstants.BRANCH_DESCRIPTION_PROPERTY_NAME, branchDescription);
+	
+		try {
+			YamlWriter.writeBranchFile(branchFile, branchProperties);
+		} catch (IOException e) {
+			throw new VersioningException("Sorry, had an issue writing out the repository file - " + e.getMessage(),e);
+		}
+	}
+	
 	private void createBusinessLayerFiles() throws VersioningException {
 		File businessLayerDir = this.appendDirectory(versionModel.getWorkingDirLocation(), RepositoryDirectory.BUSINESS_LAYER.getDirectoryName());
 		if(!businessLayerDir.exists()) {

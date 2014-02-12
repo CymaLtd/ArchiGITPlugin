@@ -29,6 +29,7 @@ public interface IVersionModel {
 	public File getWorkingDirLocation();
 	public File getDefaultWorkingDirLocation();
 	public String getModelName();
+	public void setModelName(String name);
 	public String getModelId();
 	public String getRepositoryId();
 	public void setRepositoryId(String repositoryId);
@@ -48,4 +49,6 @@ public interface IVersionModel {
 	public void setRemoteRepoLocation(String remoteRepoLocation);
 	public String getRemoteUser();
 	public void setRemoteUser(String remoteUser);
+	public void setModelDescription(String description);
+	public String getModelDescription();
 }

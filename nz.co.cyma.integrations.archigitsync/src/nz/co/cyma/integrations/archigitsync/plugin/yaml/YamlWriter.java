@@ -29,5 +29,13 @@ public class YamlWriter {
 		yaml.dump(modelContent, sw);
 
 	}	
+	
+	public static void writeBranchFile(File branchFile, Map branchContent) throws IOException {
+		Yaml yaml = new Yaml();
+		
+		FileWriter sw = new FileWriter(branchFile);
+		yaml.dump(branchContent, sw);
+
+	}	
 
 }
