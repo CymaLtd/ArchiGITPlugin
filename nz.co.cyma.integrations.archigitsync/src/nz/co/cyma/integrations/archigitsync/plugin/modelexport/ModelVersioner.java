@@ -98,10 +98,7 @@ public class ModelVersioner implements IModelExporter {
 				pushModelToRemoteRepository();
 			}
 			
-			//make sure we save the model after all this so that the properties are kept
-			//model.eNotify(new ENotificationImpl((InternalEObject) model, Notification.SET, IArchimatePackage.ARCHIMATE_MODEL__PURPOSE, "", model.getPurpose()));
-			//TODO doesn't work because the model doesn't think it is dirty, need to fix...
-			//IEditorModelManager.INSTANCE.saveModelAs(model);
+			IEditorModelManager.INSTANCE.saveModel(model);
 
 		} 
 		catch (VersioningException e) {
