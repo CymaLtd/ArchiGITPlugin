@@ -24,7 +24,7 @@ public class VersionElement implements IVersionElement {
 		
 		versionFields.put(VersionElementAttribute.ID.getKeyName(), this.archiElement.getId());
 		versionFields.put(VersionElementAttribute.NAME.getKeyName(), this.archiElement.getName());
-		versionFields.put(VersionElementAttribute.DOCUMENTATION.getKeyName(), this.archiElement.getDocumentation());
+		versionFields.put(VersionElementAttribute.DOCUMENTATION.getKeyName(), this.normalise(this.archiElement.getDocumentation()));
 		versionFields.put(VersionElementAttribute.PROPERTIES.getKeyName(), this.archiElement.getProperties());
 		versionFields.put(VersionElementAttribute.ELEMENT_TYPE.getKeyName(), archiElement.eClass().getName());
 		versionFields.put(VersionElementAttribute.TYPE.getKeyName(), folderPath.getFolderPathTypeAsString());
@@ -50,7 +50,7 @@ public class VersionElement implements IVersionElement {
 	}
 	
     private String normalise(String s) {
-        if(s == null) {
+        if(s == null||s.equals("")) {
             return ""; //$NON-NLS-1$
         }
         
