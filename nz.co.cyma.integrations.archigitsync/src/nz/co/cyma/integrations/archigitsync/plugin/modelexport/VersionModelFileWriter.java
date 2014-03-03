@@ -279,7 +279,7 @@ public class VersionModelFileWriter {
 	}
 
 	private void deleteFilesForDeletedElements(List<IVersionElement> versionElementList, File directory) {
-		Map<String, IVersionElement> versionFileMap = this.getVersionElementFileMap(versionModel.getBusinessVersionObjects());
+		Map<String, IVersionElement> versionFileMap = this.getVersionElementFileMap(versionElementList);
 		File [] fileList = directory.listFiles();
 		for(int i=0; i<fileList.length; i++) {
 			if(!versionFileMap.containsKey(fileList[i].getName())) {
