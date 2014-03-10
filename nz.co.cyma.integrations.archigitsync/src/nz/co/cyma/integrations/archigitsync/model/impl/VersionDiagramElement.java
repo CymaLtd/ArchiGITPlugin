@@ -2,6 +2,7 @@ package nz.co.cyma.integrations.archigitsync.model.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,13 +25,13 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 	private IDiagramModel archiElement = null;
 	
 
-	Map<String, IVersionElement> diagramElements = new <String, IVersionElement> HashMap();
+	Map<String, IVersionElement> diagramElements = new <String, IVersionElement> LinkedHashMap();
 
 	//Map<String, IVersionElement> relationshipElements = new <String, IVersionElement> HashMap();
-	Map<String, Map> diagramElementFeatures = new <String, Map> HashMap();
-	Map<String, Map> diagramSpecificFeatures = new <String, Map> HashMap();
-	Map<String, Map> diagramRelationshipFeatures = new <String, Map> HashMap();
-	Map<String, String> diagramFeatures = new <String, String> HashMap();
+	Map<String, Map> diagramElementFeatures = new <String, Map> LinkedHashMap();
+	Map<String, Map> diagramSpecificFeatures = new <String, Map> LinkedHashMap();
+	Map<String, Map> diagramRelationshipFeatures = new <String, Map> LinkedHashMap();
+	Map<String, String> diagramFeatures = new <String, String> LinkedHashMap();
 	protected Map versionFields = new HashMap();
 	
 	VersionDiagramElement(IDiagramModel archiElement, IFolderPath folderPath) {
@@ -82,7 +83,7 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 			elementFeatures.put(featureType.getKeyName(), value);
 		}
 		else {
-			Map<String, String> elementFeatures = new <String, String> HashMap();
+			Map<String, String> elementFeatures = new <String, String> LinkedHashMap();
 			elementFeatures.put(featureType.getKeyName(), value);
 			this.diagramElementFeatures.put(elementId, elementFeatures);
 		}
@@ -96,7 +97,7 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 			elementFeatures.put(featureType.getKeyName(), value);
 		}
 		else {
-			Map<String, String> elementFeatures = new <String, String> HashMap();
+			Map<String, String> elementFeatures = new <String, String> LinkedHashMap();
 			elementFeatures.put(featureType.getKeyName(), value);
 			this.diagramSpecificFeatures.put(elementId, elementFeatures);
 		}
@@ -120,7 +121,7 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 				
 			}
 			else {
-				Map <String, String> relationshipFeatures = new <String, String> HashMap();					
+				Map <String, String> relationshipFeatures = new <String, String> LinkedHashMap();					
 				relationshipFeatures.put(featureType.getKeyName(), value);	
 				sourceRelationships.put(relationshipId, relationshipFeatures);
 			}
@@ -128,8 +129,8 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 		}
 		else {
 			
-			Map sourceRelationships = new HashMap();
-			Map relationshipFeatures = new HashMap();
+			Map sourceRelationships = new LinkedHashMap();
+			Map relationshipFeatures = new LinkedHashMap();
 			
 			relationshipFeatures.put(featureType.getKeyName(), value);				
 			sourceRelationships.put(relationshipId, relationshipFeatures);
