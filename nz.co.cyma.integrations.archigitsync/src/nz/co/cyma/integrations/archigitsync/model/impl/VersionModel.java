@@ -256,6 +256,7 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 		
 		versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_NAME, diagramElement.getName());
 		versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_TYPE, diagramElement.eClass().getName());
+
 		
 		if(diagramElement instanceof IDiagramModelGroup)
 			versionDiagramElement.addDiagramSpecificElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.DIAGRAM_OBJECT_DOCUMENTATION, ((IDocumentable) diagramElement).getDocumentation());
@@ -282,6 +283,7 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 	
 		versionDiagramElement.addDiagramElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.ELEMENT_TEXT_ALIGNMENT, Integer.toString(diagramElement.getTextAlignment()));
 		versionDiagramElement.addDiagramElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.ELEMENT_TEXT_POSITION, Integer.toString(diagramElement.getTextPosition()));
+		versionDiagramElement.addDiagramElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.ELEMENT_REPRESENTATION_TYPE, Integer.toString(diagramElement.getType()));
 		
 		if(parentId !=null)
 			versionDiagramElement.addDiagramElementFeature(diagramElement.getId(), VersionDiagramFeatureAttribute.PARENT_ELEMENT_ID, parentId);

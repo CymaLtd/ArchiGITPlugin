@@ -387,6 +387,7 @@ public class LocalRepositoryImport implements IModelImporter {
     			archiDiagramObject.setFontColor((String)diagramElement.get(VersionDiagramFeatureAttribute.ELEMENT_FONT_COLOUR.getKeyName()));
     			archiDiagramObject.setTextAlignment(this.getSafeFeatureValue(diagramElement, VersionDiagramFeatureAttribute.ELEMENT_TEXT_ALIGNMENT.getKeyName()));
     			archiDiagramObject.setTextPosition(this.getSafeFeatureValue(diagramElement, VersionDiagramFeatureAttribute.ELEMENT_TEXT_POSITION.getKeyName()));
+    			archiDiagramObject.setType(this.getSafeFeatureValue(diagramElement, VersionDiagramFeatureAttribute.ELEMENT_REPRESENTATION_TYPE.getKeyName()));
     			
     			diagram.getChildren().add(archiDiagramObject);
     			archiDiagramObjects.put((String)objectId, archiDiagramObject);

@@ -13,6 +13,7 @@ public enum VersionDiagramFeatureAttribute {
 	ELEMENT_TEXT_ALIGNMENT ("textAlignment"),
 	ELEMENT_TEXT_POSITION ("textPosition"),
 	ELEMENT_OBJECT_ID ("elementObjectId"),
+	ELEMENT_REPRESENTATION_TYPE ("representationType"),
 	CONNECTION_LINE_WIDTH ("connectionWidth"),
 	CONNECTION_LINE_COLOUR ("connectionColour"),
 	SOURCE_RELATIONSHIP_IDS ("sourceRelationshipIds"),
