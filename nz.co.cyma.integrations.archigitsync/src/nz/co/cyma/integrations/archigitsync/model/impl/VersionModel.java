@@ -11,6 +11,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import com.archimatetool.model.FolderType;
+import com.archimatetool.model.IAccessRelationship;
 import com.archimatetool.model.IArchimateDiagramModel;
 import com.archimatetool.model.IArchimateElement;
 import com.archimatetool.model.IArchimateModel;
@@ -174,6 +175,7 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 	public IVersionElement createVersionRelationshipElement(IRelationship archiElement, IFolderPath folderPath) {
 		IVersionElement source = this.getModelElement(archiElement.getSource().getId());
 		IVersionElement target = this.getModelElement(archiElement.getTarget().getId());
+		
 		return new VersionRelationshipElement(archiElement, folderPath, source, target);
 	}
 	
