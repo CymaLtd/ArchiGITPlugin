@@ -339,7 +339,7 @@ public class LocalRepositoryImport implements IModelImporter {
     		//relationship type specific
     		if (relationship instanceof IAccessRelationship) {
     			IAccessRelationship accessRel = (IAccessRelationship) relationship;
-    			if (((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName())).containsKey(VersionRelationshipAttribute.ACCESS_TYPE.getKeyName())) {
+    			if ((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName()) !=null && ((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName())).containsKey(VersionRelationshipAttribute.ACCESS_TYPE.getKeyName())) {
     				int accessType = Integer.parseInt((String)((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName())).get(VersionRelationshipAttribute.ACCESS_TYPE.getKeyName()));
     				accessRel.setAccessType(accessType);
     			}
