@@ -173,8 +173,17 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 	}
 	
 	public IVersionElement createVersionRelationshipElement(IRelationship archiElement, IFolderPath folderPath) {
-		IVersionElement source = this.getModelElement(archiElement.getSource().getId());
-		IVersionElement target = this.getModelElement(archiElement.getTarget().getId());
+		IArchimateElement sourceId = archiElement.getSource();
+		IArchimateElement targetId = archiElement.getTarget();
+		
+		if (sourceId == null || targetId == null) {
+			System.out.println("Issue with corrupt relationship - id: " + archiElement.getId() + " type: " + archiElement.eClass().getName() + " not exporting");
+			return null;
+		}
+			
+		
+		IVersionElement source = this.getModelElement(sourceId.getId());
+		IVersionElement target = this.getModelElement(targetId.getId());
 		
 		return new VersionRelationshipElement(archiElement, folderPath, source, target);
 	}

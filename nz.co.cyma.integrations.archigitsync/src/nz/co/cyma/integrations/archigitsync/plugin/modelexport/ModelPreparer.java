@@ -83,8 +83,12 @@ public class ModelPreparer {
     
     private void getElements(IFolder folder, List<IVersionElement> list) {
         for(EObject object : folder.getElements()) {
-        	if(object instanceof IRelationship)
-        		list.add(versionModel.createVersionRelationshipElement((IRelationship) object, folderPath.clonePath()));
+        	if(object instanceof IRelationship) {
+        		IVersionElement versionEl = versionModel.createVersionRelationshipElement((IRelationship) object, folderPath.clonePath());
+        		if(versionEl !=null)
+        			list.add(versionEl);
+        	}
+        		
         	else if(object instanceof IArchimateElement)
         		list.add(versionModel.createVersionElement((IArchimateElement) object, folderPath.clonePath()));
         	else if(object instanceof IArchimateDiagramModel)
