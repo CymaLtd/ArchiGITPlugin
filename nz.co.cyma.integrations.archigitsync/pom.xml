@@ -8,7 +8,7 @@
   </parent>
  
   <artifactId>nz.co.cyma.integrations.archigitsync.plugin</artifactId>
-    <!--version--><version>2.7.1.1</version>
+    <!--version--><version>2.7.1.2</version>
   <packaging>eclipse-plugin</packaging>
  
 </project>
