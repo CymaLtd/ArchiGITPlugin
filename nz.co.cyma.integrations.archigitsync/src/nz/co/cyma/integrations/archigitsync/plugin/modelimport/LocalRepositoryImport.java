@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.MessageBox;
 
 import com.archimatetool.editor.model.IEditorModelManager;
 import com.archimatetool.editor.model.IModelImporter;
+import com.archimatetool.model.IAccessRelationship;
 import com.archimatetool.model.IArchimateDiagramModel;
 import com.archimatetool.model.IArchimateElement;
 import com.archimatetool.model.IArchimateFactory;
@@ -333,6 +334,15 @@ public class LocalRepositoryImport implements IModelImporter {
     		String relationType = (String)objectFeatureMap.get(VersionElementAttribute.TYPE.getKeyName());
     		if(relationType.equals("derived")) {
     			typeFolder = derivedRelations;
+    		}
+    		
+    		//relationship type specific
+    		if (relationship instanceof IAccessRelationship) {
+    			IAccessRelationship accessRel = (IAccessRelationship) relationship;
+    			if ((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName()) !=null && ((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName())).containsKey(VersionRelationshipAttribute.ACCESS_TYPE.getKeyName())) {
+    				int accessType = Integer.parseInt((String)((Map)objectFeatureMap.get(VersionRelationshipAttribute.ADDITIONAL_ATTRIBUTES.getKeyName())).get(VersionRelationshipAttribute.ACCESS_TYPE.getKeyName()));
+    				accessRel.setAccessType(accessType);
+    			}
     		}
     		
     		//handle folders if needs be

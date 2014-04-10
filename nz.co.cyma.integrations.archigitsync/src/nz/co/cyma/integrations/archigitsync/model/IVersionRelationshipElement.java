@@ -9,4 +9,6 @@ import com.archimatetool.model.IProperty;
 public interface IVersionRelationshipElement extends IVersionElement {
 	public IVersionElement getSourceElement();
 	public IVersionElement getTargetElement();
+	public void setAdditionalAttribute(String attributeName, String attributeValue);
+	public Map getAdditionalAttributes();
 }
