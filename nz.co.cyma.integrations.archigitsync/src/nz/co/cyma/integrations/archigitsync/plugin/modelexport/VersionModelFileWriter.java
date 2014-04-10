@@ -270,7 +270,7 @@ public class VersionModelFileWriter {
 	}
 	
 	private Map<String,IVersionElement> getVersionElementFileMap(List<IVersionElement> versionElementList) {
-		Map<String,IVersionElement> fileMap = new <String,IVersionElement>HashMap();
+		Map<String,IVersionElement> fileMap = new HashMap<String,IVersionElement>();
 		for(IVersionElement versionElement: versionElementList) {
 			fileMap.put(versionElement.getId() + ".yml", versionElement);
 		}

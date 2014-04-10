@@ -68,8 +68,8 @@ public class LocalRepositoryImport implements IModelImporter {
 	String repoUser = null;
 	String repoPassword = null;
 	String chosenBranch = "master";
-	Map<String, Object> modelElements = new <String, Object> HashMap();
-	Map<String, IRelationship> modelRelationships = new <String, IRelationship> HashMap();
+	Map<String, Object> modelElements = new HashMap<String, Object> ();
+	Map<String, IRelationship> modelRelationships = new HashMap<String, IRelationship>();
 	
 	@Override
 	public void doImport() throws IOException {

@@ -11,7 +11,7 @@ import com.archimatetool.model.IProperty;
 
 public class ArchiUtils {
 	public static Map<String, IProperty> getPropertiesMap(EList<IProperty> archPropertyList) {
-		Map<String, IProperty> propertiesMap = new <String, IProperty>HashMap();
+		Map<String, IProperty> propertiesMap = new HashMap<String, IProperty>();
 		
 		for(IProperty modelProperty: archPropertyList ) {
 			propertiesMap.put(modelProperty.getKey(), modelProperty);
@@ -21,7 +21,7 @@ public class ArchiUtils {
 	}
 	
 	public static Map<String, IFolder> getFolderMap(EList<IFolder> folders) {
-		Map folderMap = new HashMap();
+		Map<String, IFolder> folderMap = new HashMap<String, IFolder>();
 		for(IFolder folder: folders) {
 			folderMap.put(folder.getName(), folder);
 		}

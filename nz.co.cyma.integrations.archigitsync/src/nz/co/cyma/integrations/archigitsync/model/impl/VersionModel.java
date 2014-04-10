@@ -68,15 +68,15 @@ public class VersionModel implements IVersionModel, IVersionModelPropertyConstan
 		this.archiModel = archiModel;
 		this.setupLocations();
 		this.versionPrefs = new Preferences();
-		this.businessElements = new <String, IVersionElement>HashMap();
-		this.applicationElements = new <String, IVersionElement>HashMap();
-		this.technologyElements = new <String, IVersionElement>HashMap();
-		this.motivationElements = new <String, IVersionElement>HashMap();
-		this.implementationElements = new <String, IVersionElement>HashMap();
-		this.connectorElements = new <String, IVersionElement>HashMap();
-		this.relationshipElements = new <String, IVersionElement>HashMap();
-		this.derivedRelationshipElements = new <String, IVersionElement>HashMap();
-		this.diagramElements = new <String, IVersionElement>HashMap();
+		this.businessElements = new HashMap<String, IVersionElement>();
+		this.applicationElements = new HashMap<String, IVersionElement>();
+		this.technologyElements = new HashMap<String, IVersionElement>();
+		this.motivationElements = new HashMap<String, IVersionElement>();
+		this.implementationElements = new HashMap<String, IVersionElement>();
+		this.connectorElements = new HashMap<String, IVersionElement>();
+		this.relationshipElements = new HashMap<String, IVersionElement>();
+		this.derivedRelationshipElements = new HashMap<String, IVersionElement>();
+		this.diagramElements = new HashMap<String, IVersionElement>();
 	}
 
 //	@Override

@@ -25,13 +25,13 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 	private IDiagramModel archiElement = null;
 	
 
-	Map<String, IVersionElement> diagramElements = new <String, IVersionElement> LinkedHashMap();
+	Map<String, IVersionElement> diagramElements = new LinkedHashMap<String, IVersionElement>();
 
 	//Map<String, IVersionElement> relationshipElements = new <String, IVersionElement> HashMap();
-	Map<String, Map> diagramElementFeatures = new <String, Map> LinkedHashMap();
-	Map<String, Map> diagramSpecificFeatures = new <String, Map> LinkedHashMap();
-	Map<String, Map> diagramRelationshipFeatures = new <String, Map> LinkedHashMap();
-	Map<String, String> diagramFeatures = new <String, String> LinkedHashMap();
+	Map<String, Map> diagramElementFeatures = new LinkedHashMap<String, Map>();
+	Map<String, Map> diagramSpecificFeatures = new LinkedHashMap<String, Map>();
+	Map<String, Map> diagramRelationshipFeatures = new LinkedHashMap<String, Map>();
+	Map<String, String> diagramFeatures = new LinkedHashMap<String, String>();
 	protected Map versionFields = new HashMap();
 	
 	VersionDiagramElement(IDiagramModel archiElement, IFolderPath folderPath) {
@@ -83,7 +83,7 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 			elementFeatures.put(featureType.getKeyName(), value);
 		}
 		else {
-			Map<String, String> elementFeatures = new <String, String> LinkedHashMap();
+			Map<String, String> elementFeatures = new LinkedHashMap<String, String>();
 			elementFeatures.put(featureType.getKeyName(), value);
 			this.diagramElementFeatures.put(elementId, elementFeatures);
 		}
@@ -97,7 +97,7 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 			elementFeatures.put(featureType.getKeyName(), value);
 		}
 		else {
-			Map<String, String> elementFeatures = new <String, String> LinkedHashMap();
+			Map<String, String> elementFeatures = new LinkedHashMap<String, String>();
 			elementFeatures.put(featureType.getKeyName(), value);
 			this.diagramSpecificFeatures.put(elementId, elementFeatures);
 		}
@@ -121,7 +121,7 @@ public class VersionDiagramElement implements IVersionDiagramElement {
 				
 			}
 			else {
-				Map <String, String> relationshipFeatures = new <String, String> LinkedHashMap();					
+				Map <String, String> relationshipFeatures = new LinkedHashMap<String, String>();					
 				relationshipFeatures.put(featureType.getKeyName(), value);	
 				sourceRelationships.put(relationshipId, relationshipFeatures);
 			}
