@@ -1,8 +1,10 @@
 package nz.co.cyma.integrations.archigitsync.plugin.yaml;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +19,9 @@ public class YamlWriter {
 		
 		for(IVersionElement versionEl: versionList) {
 			String versionFile = location.toString() + File.separatorChar + versionEl.getId() + ".yml";
-			FileWriter sw = new FileWriter(versionFile);
-			yaml.dump(versionEl.getVersionProperties(), sw);
+			FileOutputStream fileStream = new FileOutputStream(new File(versionFile));
+			OutputStreamWriter writer = new OutputStreamWriter(fileStream, "UTF-8");
+			yaml.dump(versionEl.getVersionProperties(), writer);
 		}
 	}
 	

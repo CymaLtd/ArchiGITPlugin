@@ -514,7 +514,7 @@ public class LocalRepositoryImport implements IModelImporter {
 				if(folderToAddTo == null) {
     				folderToAddTo = f.createFolder();
     				folderToAddTo.setName(folder);
-    				folderToAddTo.setType(typeFolder.getType());
+    				//folderToAddTo.setType(typeFolder.getType());
     				parentFolder.getFolders().add(folderToAddTo);
 				}
 				
