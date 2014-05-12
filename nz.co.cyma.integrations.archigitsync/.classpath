@@ -23,5 +23,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/com.archimatetool.tests"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/com.archimatetool.widgets"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/com.archimatetool.zest"/>
+	<classpathentry kind="lib" path="/home/michael/Downloads/commons-io-2.4/commons-io-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

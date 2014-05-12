@@ -1,16 +1,26 @@
 package nz.co.cyma.integrations.archigitsync.plugin.dialog;
 
 
-	import org.eclipse.jface.dialogs.IMessageProvider;
+	import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import nz.co.cyma.integrations.archigitsync.model.IVersionModelPropertyConstants;
+
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -26,11 +36,13 @@ import org.eclipse.swt.widgets.Text;
 	  private Text txtWorkingDirectory;
 	  private Text txtRepoUser;
 	  private Text txtRepoPassword;
+	  private Combo cmbRepoList;
 
 	  private String repositoryToClone = null;
 	  private String workingDirectory;
 	  private String repoUser = null;
 	  private String repoPassword;
+	  private Map repoPropertyMap = null;
 
 	  public RemoteRepositoryDialog(Shell parentShell) {
 	    super(parentShell);
@@ -52,6 +64,7 @@ import org.eclipse.swt.widgets.Text;
 	    container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	    container.setLayout(layout);
 
+	    createRepoIdCombo(container);
 	    createRepositoryToClone(container);
 	    //createWorkingDirectory(container);
 	    this.createRepoUser(container);
@@ -129,6 +142,50 @@ import org.eclipse.swt.widgets.Text;
 
 		    txtRepoPassword = new Text(container, SWT.PASSWORD | SWT.BORDER);
 		    txtRepoPassword.setLayoutData(dataPassword);
+	  }
+	  
+	  
+	  private void createRepoIdCombo(Composite container) {
+		    Label lbtSaveToBranch = new Label(container, SWT.NONE);
+		    lbtSaveToBranch.setText("Existing Repository Id (If Known)");
+		    
+		    GridData dataBranch = new GridData();
+		    dataBranch.grabExcessHorizontalSpace = true;
+		    dataBranch.horizontalAlignment = GridData.FILL;
+
+		    this.cmbRepoList = new Combo(container, SWT.BORDER);
+
+		    Set s = this.repoPropertyMap.keySet();
+		    Iterator i = s.iterator();
+		    String[] itemList = new String[s.size()];
+		    int ctr = 0;
+		    while(i.hasNext()) {
+		    	String value = (String) i.next();
+		    	itemList[ctr] = value;
+		    	ctr++;
+		    }
+		    
+		    cmbRepoList.setItems(itemList);
+		    cmbRepoList.setLayoutData(dataBranch);
+		    
+		    cmbRepoList.addFocusListener(new FocusAdapter() {
+
+				@Override
+				public void focusLost(FocusEvent e) {
+
+					
+					if(repoPropertyMap.containsKey(cmbRepoList.getText())) {
+						Properties repoProperties = (Properties) repoPropertyMap.get(cmbRepoList.getText());
+						txtRepositoryToClone.setText(repoProperties.getProperty(IVersionModelPropertyConstants.REMOTE_REPO_LOCATION_PROPERTY_NAME));
+						txtRepoUser.setText(repoProperties.getProperty(IVersionModelPropertyConstants.REMOTE_REPO_USER_PROPERTY_NAME));
+					}	
+					
+					super.focusLost(e);
+				}
+		    	
+		    });
+		    
+
 		  }
 
 
@@ -175,5 +232,9 @@ import org.eclipse.swt.widgets.Text;
 	  
 	  public void setRemoteUser(String remoteUser) {
 		  this.repoUser = remoteUser;
+	  }
+	  
+	  public void setRepoMap(Map repoPropertyMap) {
+		  this.repoPropertyMap = repoPropertyMap;
 	  }
 }

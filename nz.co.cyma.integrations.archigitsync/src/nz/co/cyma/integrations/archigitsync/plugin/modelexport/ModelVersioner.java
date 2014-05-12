@@ -10,9 +10,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import nz.co.cyma.integrations.archigitsync.model.IVersionModel;
 import nz.co.cyma.integrations.archigitsync.model.IVersionModelPropertyConstants;
+import nz.co.cyma.integrations.archigitsync.plugin.ArchiUtils;
 import nz.co.cyma.integrations.archigitsync.plugin.DialogCancelException;
 import nz.co.cyma.integrations.archigitsync.plugin.VersioningException;
 import nz.co.cyma.integrations.archigitsync.plugin.dialog.RemoteRepositoryDialog;
@@ -60,6 +62,7 @@ public class ModelVersioner implements IModelExporter {
 	private String repoPassword = null;
 	private String versionComment = "";
 	private boolean pushToRemoteOnVersion = false;
+	private Properties repoProperties = null;
 	
     public ModelVersioner() {
     }
@@ -80,7 +83,7 @@ public class ModelVersioner implements IModelExporter {
 			//straight to versioning it in the chosen working directory
 			if(versionModel.getRepositoryId()==null) {
 				//always start with where the working directory will be
-				File workingDir = setupWorkingDirectory();
+				File workingDir = setupWorkingDirectory(model);
 				
 				//if it's the first time versioning, need to know if we are creating a brand new repository or adding to an existing one
 				if(createNewRepository)
@@ -93,10 +96,13 @@ public class ModelVersioner implements IModelExporter {
 				versionExistingVersionedModel();
 			}
 			
-			//lastly, if the user chose to push the versioned model to a remote repository, we need to confirm the information for that repository
+			//if the user chose to push the versioned model to a remote repository, we need to confirm the information for that repository
 			if(this.pushToRemoteOnVersion) {
 				pushModelToRemoteRepository();
 			}
+			
+			//finally, write out common repository information to a properties file so we don't need to prompt in future for general repository information
+			updateRepositoryProperties(versionModel);
 			
 			IEditorModelManager.INSTANCE.saveModel(model);
 
@@ -258,34 +264,14 @@ public class ModelVersioner implements IModelExporter {
 	}
 	
 	
-	private File setupWorkingDirectory() throws DialogCancelException {
-		File repoLocation = this.askSaveDirectory();
+	private File setupWorkingDirectory(IArchimateModel model) throws DialogCancelException {
+		File repoLocation = ArchiUtils.getModelGitDir(ArchiUtils.getSafeUniqueModelName(model.getName(), model.getId()), true);
 		versionModel.setWorkingDirLocation(repoLocation);
 		versionModel.setRepoBranch(GitWrapper.DEFAULT_GIT_BRANCH_NAME);
 		gitRepo = new GitWrapper(repoLocation);
 		return repoLocation;
 	}
 	
-    /**
-     * Ask user for the directory to save to
-     * @throws DialogCancelException 
-     */
-    private File askSaveDirectory() throws DialogCancelException {
-        DirectoryDialog dialog = new DirectoryDialog(Display.getCurrent().getActiveShell(), SWT.SAVE);
-        //dialog.setFilterPath(this.versionModel.getModelId().toString());
-        dialog.setText("GIT repository working directory location");
-        //dialog.setFilterExtensions(new String[] { MY_EXTENSION_WILDCARD, "*.*" } ); //$NON-NLS-1$
-        String path = dialog.open();
-        if(path == null) {
-             throw new DialogCancelException("User cancelled out of working directory choice");
-        }
-        
-        
-        File file = new File(path);
-        
-        return file;
-    }
-    
     private void askBasicVersionInfo() throws DialogCancelException {
     	//if the version models repository id is null then this model can't have been versioned before, so ask
     	VersionModelDialog dialog = new VersionModelDialog(Display.getCurrent().getActiveShell(), versionModel.getRepositoryId()==null);
@@ -310,8 +296,12 @@ public class ModelVersioner implements IModelExporter {
     	this.versionModel.setRepositoryDescription(dialog.getRepoDescription());
     }
     
-    private void askExistingRepoInfo() throws DialogCancelException {
+    private void askExistingRepoInfo() throws DialogCancelException, VersioningException {
+    	//set what repositories we might already have info for in property files
+    	Map existingRepos = ArchiUtils.getRepoPropertyMap();
+    	
     	RemoteRepositoryDialog dialog = new RemoteRepositoryDialog(Display.getCurrent().getActiveShell());
+    	dialog.setRepoMap(existingRepos);
     	dialog.create();
     	int returnCode = dialog.open();
     	
@@ -366,6 +356,7 @@ public class ModelVersioner implements IModelExporter {
 		
     	this.versionModel.setRepositoryId((String) repoInfo.get(IVersionModelPropertyConstants.MODEL_REPO_ID_PROPERTY_NAME));
     	this.versionModel.setRepositoryDescription((String) repoInfo.get(IVersionModelPropertyConstants.MODEL_REPO_DESCRIPTION_PROPERTY_NAME));
+    	
 	}
     
     
@@ -377,6 +368,20 @@ public class ModelVersioner implements IModelExporter {
 		else {
 			return null;
 		}
+    }
+    
+    private void updateRepositoryProperties(IVersionModel versionModel) throws VersioningException {
+    	if(repoProperties==null)
+    		repoProperties = ArchiUtils.loadPluginRepoInfo(versionModel.getRepositoryId());
+    	
+    	repoProperties.setProperty(IVersionModelPropertyConstants.MODEL_REPO_ID_PROPERTY_NAME, versionModel.getRepositoryId());
+    	repoProperties.setProperty(IVersionModelPropertyConstants.MODEL_REPO_DESCRIPTION_PROPERTY_NAME, versionModel.getRepositoryDescription());
+    	repoProperties.setProperty(IVersionModelPropertyConstants.REMOTE_REPO_LOCATION_PROPERTY_NAME, versionModel.getRemoteRepoLocation());
+    	repoProperties.setProperty(IVersionModelPropertyConstants.REMOTE_REPO_USER_PROPERTY_NAME, versionModel.getRemoteUser());
+    	repoProperties.setProperty(IVersionModelPropertyConstants.MODEL_USER_PROPERTY_NAME, versionModel.getModelUserName());
+    	repoProperties.setProperty(IVersionModelPropertyConstants.MODEL_USER_EMAIL_NAME, versionModel.getModelUserEmail());
+    	
+    	ArchiUtils.savePluginRepoInfo(versionModel.getRepositoryId(), repoProperties);
     }
 
 }

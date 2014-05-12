@@ -14,4 +14,5 @@ Export-Package: nz.co.cyma.integrations.archigitsync.plugin,
 Bundle-ClassPath: lib/org.eclipse.jgit-3.1.0.201310021548-r.jar,
  lib/snakeyaml-1.11.jar,
  lib/jsch-0.1.50.jar,
+ lib/commons-io-2.4.jar,
  .
